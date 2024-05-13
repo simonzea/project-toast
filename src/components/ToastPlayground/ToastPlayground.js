@@ -1,48 +1,40 @@
 import React from 'react';
 
 import Button from '../Button';
+import  { ToastsContext} from '../ToastProvider';
 
 import ToastShelf from '../ToastShelf';
-import Toast from '../Toast';
 
 import styles from './ToastPlayground.module.css';
 
 const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 
 function ToastPlayground() {
-  const [variantOption, setVariantOption] = React.useState(VARIANT_OPTIONS[0]);
   const [message, setMessage] = React.useState('');
-  const [toasts, setToasts] = React.useState([]);
+  const [variantOption, setVariantOption] = React.useState(VARIANT_OPTIONS[0]);
+  const {createNewToast} = React.useContext(ToastsContext);
 
-  function createNewToast (event) {
+
+  function handleCreateNewToast(event){
     event.preventDefault();
-    let toast = {
-      id: crypto.randomUUID(),
-      variant: variantOption,
-      message,
-    }
-    setToasts([...toasts, toast]);
+    createNewToast(variantOption,message);
     setMessage('');
     setVariantOption(VARIANT_OPTIONS[0]);
   }
 
-  function dismissToast (id) {
-    const newArray = toasts.filter((toast)=>(toast.id !== id));
-    setToasts(newArray)
-  }
-
   return (
+    
     <div className={styles.wrapper}>
       <header>
         <img alt="Cute toast mascot" src="/toast.png" />
         <h1>Toast Playground</h1>
       </header>
 
-    <ToastShelf toasts={toasts} closeFunction={dismissToast}>
+    <ToastShelf>
     
     </ToastShelf>
 
-      <form className={styles.controlsWrapper} onSubmit={createNewToast}>
+      <form className={styles.controlsWrapper} onSubmit={handleCreateNewToast}>
         <div className={styles.row}>
           <label
             htmlFor="message"
