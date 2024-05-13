@@ -8,8 +8,23 @@ export const VariantOptionContext = React.createContext();
 
 function ToastProvider({children}) {
   const [toasts, setToasts] = React.useState([]);
-  
+  React.useEffect(() => {
+    // Effect logic:
 
+    function handleEscapeKey (event) {
+      const key = event.key; 
+      if (key === "Escape") {
+        deleteToasts();
+      }
+  }
+
+    window.addEventListener('keydown', handleEscapeKey);
+
+    // Cleanup function:
+    return () => {
+      window.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, []);
 
   function createNewToast (variantOption, message) {
     let toast = {
@@ -25,10 +40,15 @@ function ToastProvider({children}) {
     setToasts(newArray)
   }
 
+  function deleteToasts () {
+    setToasts([])
+  }
+
 let toastsContextValue ={
   toasts,
   createNewToast,
-  dismissToast
+  dismissToast,
+  deleteToasts
 };
 
   return (
